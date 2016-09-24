@@ -1,0 +1,284 @@
+
+iRobot Documentation: How to use the Command Module with Linux
+--------------------------------------------------------------
+
+___________________________________________________
+Section 1: Safety Information
+Section 2: About iRobot Create
+Section 3: iRobot Create and Command Module
+Section 4: Preparing you Linux Computer for iRobot
+Section 5: Testing the 'input' example program
+Section 6: Command Module Examples
+Section 7: Other Documentation and Information
+Section 8: iRobot Customer Care
+___________________________________________________
+
+Section 1: Safety Information
+
+* iRobot Create is for indoor use only.
+* Do not sit or stand on this device. Small children and pets should
+  be supervised when iRobot Create is on.
+* Do not pour or spray water onto iRobot Create.
+* Do not use iRobot Create to pick up anything that is burning or smoking.
+* iRobot is not responsible for any product issues that may arise
+  if you disable the safety sensors.
+
+____________________________________________________
+
+Section 2: About iRobot Create
+
+iRobot Create is a complete robot development kit that allows you to
+program new robot behaviors without having to worry about mechanic
+assembly and low-level code.  iRobot Create's Open Interface (OI)
+provides you with a set of commands, such as "drive" commands, demo
+commands, song commands and sensor commands, that encourage your own
+inventiveness. With iRobot Create, you can develop new behaviors and
+add third party electronics, all without having to worry about
+mechanical robustness or low-level control.
+
+When you first begin working with iRobot Create you may find its ten
+built in demos useful as inspirations for your own ideas.  As you
+become more comfortable with its abilities and interface you will want
+to write your own Open Interface-based programs to control iRobot
+Create using a serial connection from a PC or microprocessor such as
+the iRobot Command Module.
+
+You can attach and control other hardware and electronic devices to
+iRobot Create; such as a robotic arm, light display, or a ranging
+sensor. It can also become a musical instrument! By using the Song
+command you can write and save up to 16 songs in iRobot Create. For
+more information on iRobot Create's OI commands, including demos and
+songs, refer to the iRobot Create Open Interface (OI) Specification
+found at www.irobot.com/create.
+____________________________________________________
+
+Section 3: iRobot Create and Command Module Images
+
+1.) iRobot Create
+http://www.irobot.com/filelibrary/pdfs/hrd/create/Create%20Manual_Final.pdf
+
+2.) Command Module
+http://www.irobot.com/filelibrary/pdfs/hrd/create/CommandModuleGettingStarted.pdf
+____________________________________________________
+
+Section 4: Preparing your Linux System for iRobot
+
+(If you are using HackerSpace Computers, and testing your own program,
+skip to step 4)
+
+(If you are using HackerSpace Computers, and testing an example, skip
+to step 5) (Otherwise, start from step 1)
+
+1.)
+This is written for Ubuntu and Fedora. If you are using another
+distro, you'll need to find the packages yourself or compile them
+yourself.
+
+Install the following packages:
+
+Ubuntu: "sudo apt-get install avrdude avr-libc gcc-avr"
+Fedora: "sudo yum install avrdude avr-gcc avr-gcc-c++"
+
+Remove this package or if it isn't installed, happily move on:
+
+Ubuntu: "sudo apt-get remove brltty"
+Fedora: "sudo yum remove brltty"
+
+brltty is a background process which provides access to the Linux/Unix
+console for a blind person using a refreshable braille display. It is
+safe to remove unless your blind, then you should not even be reading
+this.
+
+2.)
+Copy the examples from the CD that came with the iRobot Create or
+download all the examples from HackerSpace. Put it somewhere on your
+filesystem.
+
+3.)
+Inside the input directory of the examples, open the makefile and edit
+the following lines:
+
+Line 86:
+Change from: DEBUG = dwarf-2
+Change to: DEBUG = stabs
+
+Line 201:
+Change from: AVRDUDE_PROGRAMMER = stk500
+Change to: AVRDUDE_PROGRAMMER = stk500v1
+
+Line 204:
+Change from: AVRDUDE_PORT = com9
+Change to: AVRDUDE_PORT = /dev/ttyUSB0
+
+(Since you are using a USB you must change your serial port = com9, to
+USB = /dev/ttyUSB0)
+
+(Depending on your USB connections, "ttyUSB0" might be different,
+ex. ttyUSB1,ttyUSB2,etc..)
+
+4.)
+To build the project:
+
+"make all"
+
+5.)
+To send it to the iRobot:
+
+Ubuntu: "make program"
+Fedora: "sudo make program"
+
+____________________________________________________
+
+Section 5: Testing the "input" example program
+
+1.)
+Remove the USB cable from the Command Module. Make
+sure Create's serial cable is not plugged in.
+
+2.)
+Press the red Reset Button on the Command Module to start your program.
+
+3.)
+When the input program starts, two LEDs should flash slowly, one on
+the Command Module and one on Create itself.  Press the Play button on
+Create. It will play a song and light the Advance LED on Create solid
+while the song is playing.
+
+4.)
+Press the soft button on the Command Module. Create
+plays a different song and the LED on the Command Module
+stays lit while itâ€™s playing.
+____________________________________________________
+
+Section 6: Creating your own project
+
+The easiest way to start a project is to copy one of the example
+programs and modify it for your own application.  For instance, the
+framework for sending commands and reading sensors provided by the
+drive example can be useful for most applications.To create your own
+project based on the drive example, perform the following steps:
+
+1.)
+Copy drive.c, oi.h, and makefile from the drive example directory over
+to your new project directory.
+
+2.)
+In the new directory, rename drive.c to the desired name for your new
+program, such as myapp.c
+
+3.)
+Edit the makefile to reflect the new name of your
+application. Specifically, you need to change the value of TARGET to
+the name of your new application. On line 59 of the drive makefile,
+youâ€™ll see the line: TARGET = drive Change this to the new name of
+your application.  For example: TARGET = myapp
+
+4.)
+Next, change the behavior of the program to suit your new application
+by changing the C code. In drive.c, the behavior of Create is defined
+in the main function. Refer to Section 6 and Section 7 for more
+details on examples. When you're ready with your code, repeat the
+steps in Section 4.3-4.4 and Section 5.1-5.2 to set up your project
+and to compile, download, and test your program.
+____________________________________________________
+
+Section 7: Command Module Examples
+
+1.) Drive
+The drive example program comes preprogrammed into the Command
+Module. It demonstrates the basic capabilities of the Command Module
+and the iRobot Create Open Inter face by driving around, reacting to
+sensors, and using various inputs and outputs. It makes a series of
+rising beeps when it is first powered to let you know the Command
+Module is alive and blinks Createâ€™s LEDs (note that the program makes
+Createâ€™s power LED orange). Then, if you place Create on the floor and
+press the Command Moduleâ€™s soft button it starts driving on the floor,
+backing up and turning when it runs into something with its bumper,
+and blinking all LEDs in a pattern. To stop the program, press the
+button again or simply pick it up.  The code provides useful function
+to initialize the Command Module and iRobot Create, continuously read
+Createâ€™s sensor values, drive Create, turn on Create, and change the
+baud rate.
+
+2.) Input
+The input example program illustrates the three types of input and
+output that you can use with the Command Module. You can interact with
+hardware on iRobot Create through the Open Interface, use the built-in
+Command Module hardware, and add your own hardware to the Command
+Moduleâ€™s connectors.  This simple program flashes three LEDs, one on
+each type of output, and waits for button presses on each type of
+input. If it gets a button press, it lights the associated LED and
+plays a song.
+
+3.) Light(Light Sensor not included)
+
+The light example program demonstrates a possible application for the
+Command Module and iRobot Create. It searches your house for lights
+which are left on and plays an alarm when it finds a light so that you
+can turn it off. The program has all of Createâ€™s and Command Moduleâ€™s
+LEDs turned on (note that Createâ€™s power LED will be orange) so that
+itâ€™s easy to find in the dark.
+
+Start it up in a relatively dark room by pressing the soft button. It
+will sample the light level when it starts and will set off its alarm
+when it detects a significantly brighter room.  To detect the light
+level, the program uses a CDS light sensor which you need to add to
+the Command Moduleâ€™s top center ePort, as described in Section 7. It
+measures the light level from the sensor using one of the Command
+Module's analog input pins.
+
+____________________________________________________
+
+Section 8: Other Documentation and Information
+
+1.)Owner's Guide
+
+Contains all the information you need to get started with iRobot
+Create.  Includes instructions on how to execute iRobot Createâ€™s demo
+programs, details on iRobot Createâ€™s hardware, troubleshooting, and
+available iRobot Create Accessories.
+
+http://www.irobot.com/filelibrary/pdfs/hrd/create/Create%20Manual_Final.pdf
+
+2.)Open Interface Specifications
+
+A detailed reference of all the iRobot Create Open Interface commands
+and specifics on iRobot Create's physical connections and serial port
+settings.
+
+http://www.irobot.com/filelibrary/pdfs/hrd/create/Create%20Open%20Interface_v2.pdf
+
+3.)Command Module Quick Start
+
+A brief tutorial-style guide to get you started with the iRobot
+Command Module.
+
+http://www.irobot.com/filelibrary/pdfs/hrd/create/CommandModuleGettingStarted.pdf
+
+4.)Command Module Owner's Manual
+
+A hardware and software reference for the more advanced robot
+developer.  This manual includes all the details you need to actually
+start programming the iRobot Command Module and become more familiar
+with Create robotâ€™s available hardware. Includes details on the
+programming tools you will need and a number of examples upon which
+you can build.
+
+http://www.irobot.com/filelibrary/pdfs/hrd/create/Command%20Module%20Manual_v2.pdf
+____________________________________________________
+
+Section 9: iRobot Customer Care
+
+If you have questions or comments about iRobot Create, please talk to
+the Hackerlab assistant.
+
+Please visit our website at www.irobot.com for support tips,
+frequently asked questions, or information about accessories and other
+iRobot products.  We would like to hear from you.
+
+Should you need assistance, visit the iRobot support web site at
+www.irobot.com/support.
+
+Do not feed the iRobot Create.  Do not taunt the iRobot Create.  The
+iRobot Create is just as afraid of you as you are of it.
+by Anthony Velazquez, LCSR
