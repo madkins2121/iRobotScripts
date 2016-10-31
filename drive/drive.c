@@ -16,6 +16,7 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #include <stdlib.h>
+#include <time.h>
 #include "oi.h"
 
 
@@ -116,6 +117,9 @@ int main (void)
       byteTx(START_SONG);
       delayAndUpdateSensors(2813);
 
+      time_t seconds, start;
+      time(&start);
+      int randomNum = rand() % 30 + 20;
       // Drive around until a button or unsafe condition is detected
       while(!(UserButtonPressed)
             && (!sensors[SenCliffL])
@@ -125,8 +129,20 @@ int main (void)
             && (!sensors[SenChAvailable])
         )
       {
-        // drive straight
-        drive(20, RadStraight);
+
+
+        time(&seconds);
+        if(seconds % randomNum == 0) {
+            //randomly turn around
+          drive(0, randomAngle());
+          randomNum = rand() % 30 + 20;
+        } else {
+          // drive straight
+           drive(20, RadStraight);
+        }
+
+
+
 
         // wait a little more than one robot tick for sensors to update
         delayAndUpdateSensors(20);
@@ -134,7 +150,7 @@ int main (void)
 
       // Stop driving
       drive(0, RadStraight);
-
+      clock_t end = clock();
       // Play end song and wait
       delayAndUpdateSensors(500);
       byteTx(CmdPlay);
@@ -252,6 +268,8 @@ void initialize(void)
 
   // Turn on interrupts
   sei();
+
+  srand(time(NULL));
 }
 
 
@@ -334,8 +352,6 @@ void drive(int16_t velocity, int16_t radius)
   byteTx((uint8_t)((radius >> 8) & 0x00FF));
   byteTx((uint8_t)(radius & 0x00FF));
 }
-
-
 
 
 // Return an angle value in the range 53 to 180 (degrees)
